@@ -39,22 +39,22 @@ async function debugYuanbao() {
         
         // 查找并点击“新建对话”按钮
         const newChatBtn = await flow.find(
-            '//Document[@ControlType="Document" and @AutomationId="RootWebArea" and @FrameworkId="Chrome" and @LocalizedControlType="文档"]/Group[@ControlType="Group" and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat_mainPage__wilLn") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "temp-dialogue-btn_temp-dialogue") and @FrameworkId="Chrome" and @LocalizedControlType="组"]'
+            `//Document[@AutomationId='RootWebArea']/Group/Group/Group[starts-with(@ClassName, 'temp-dialogue-btn_temp-dialogue') and @FrameworkId='Chrome']`
         );
         
         await newChatBtn.click();
         
         // 查找并点击输入区域
         const inputArea = await flow.find(
-            '//Document[@ControlType="Document" and @AutomationId="RootWebArea" and @FrameworkId="Chrome" and @LocalizedControlType="文档"]/Group[@ControlType="Group" and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat_mainPage__wilLn") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat_chat") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "index_v2_search") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat-command-editor-specail") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and @ClassName="ql-editor ql-blank" and @FrameworkId="Chrome" and @LocalizedControlType="组"]'
-        );
+           `//Document[@AutomationId='RootWebArea']/Group/Group/Group/Group/Group/Group[@ClassName='ql-editor ql-blank']`
+                );
         
         await inputArea.click();
         await inputArea.typeText('测试');
         
         // 查找并点击发送按钮
         const sendBtn = await flow.find(
-            '//Document[@ControlType="Document" and @AutomationId="RootWebArea" and @FrameworkId="Chrome" and @LocalizedControlType="文档"]/Group[@ControlType="Group" and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat_mainPage__wilLn") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "chat_chat") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and starts-with(@ClassName, "index_v2_search") and @FrameworkId="Chrome" and @LocalizedControlType="组"]/Group[@ControlType="Group" and @AutomationId="yuanbao-send-btn" and starts-with(@ClassName, "SendButton_send") and @FrameworkId="Chrome" and @LocalizedControlType="组"]'
+        `//Document[@AutomationId='RootWebArea']/Group/Group/Group/Group/Group[@AutomationId='yuanbao-send-btn']/Image`   
         );
         
         await sendBtn.click();
@@ -66,6 +66,26 @@ async function debugYuanbao() {
         if (error instanceof Error) {
             console.error(`   错误类型: ${error.constructor.name}`);
             console.error(`   错误消息: ${error.message}`);
+            
+            // 提供更详细的网络错误信息
+            if (error.constructor.name === 'AxiosError') {
+                const axiosError = error;
+                if (!axiosError.response) {
+                    console.error('\n💡 可能的原因:');
+                    console.error('   • 后端服务未启动');
+                    console.error('   • 网络连接失败');
+                    console.error('   • 端口 8080 被占用');
+                    console.error('\n🔧 解决方法:');
+                    console.error('   1. 启动后端服务:');
+                    console.error('      cd d:\\repos\\uia-project\\win-element-selector-rs');
+                    console.error('      cargo run --bin element-selector-server');
+                    console.error('   2. 确认服务启动成功后再运行此脚本');
+                    console.error('   3. 访问 http://localhost:8080/api/health 检查服务状态');
+                } else {
+                    console.error(`   HTTP 状态码: ${axiosError.response.status}`);
+                    console.error(`   响应数据:`, axiosError.response.data);
+                }
+            }
         }
         process.exit(1);
     }
