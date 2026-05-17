@@ -28,7 +28,7 @@ async function debugYuanbao() {
         // ✅ 在这里配置 idle 的默认值
         idleMotion: {
             speed: 'normal',
-            moveInterval: 800,
+            moveInterval: 80,
             humanIntervention: {
                 enabled: true,
                 pauseOnMouse: true,
@@ -66,7 +66,20 @@ async function debugYuanbao() {
         );
 
         await inputArea.click();
-        await inputArea.typeText('测试');
+        
+        // 示例：使用虚拟键输入文本并按回车
+        // 方式 1: 直接输入文本后按 Enter
+        await inputArea.type('测试一下啊{ctrl+a}{delete}测试一下啊今日新闻');
+        
+        // 方式 2: 多行文本输入
+        // await inputArea.type('第一行{Enter}第二行{Enter}第三行');
+        
+        // 方式 3: 使用 Tab 切换字段（如果有多个输入框）
+        // await inputArea.type('内容{Tab}');
+        
+        // 组合键示例（如果需要）
+        // await flow.shortcut('Ctrl+A');  // 全选
+        // await flow.shortcut('Ctrl+C');  // 复制
 
         // 查找并点击发送按钮
         const sendBtn = await flow.find(
