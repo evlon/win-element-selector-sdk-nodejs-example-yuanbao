@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "element-selector-sdk-nodejs": "^0.0.1"
+    "element-selector-sdk-nodejs": "file:../win-element-selector-sdk"
   }
 }
