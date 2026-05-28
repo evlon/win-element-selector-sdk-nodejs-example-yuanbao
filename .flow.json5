@@ -1,0 +1,71 @@
+// Flow 配置文件 — 按项目/计算机自定义默认值
+// 修改后重启生效，所有字段可选，未设置时使用内置默认值
+
+{
+    "baseUrl": "http://127.0.0.1:8080",
+    "timeout": 60000,
+    "speedFactor": 1,
+    "click": {
+        "humanize": true,
+        "randomRange": 0.55,
+        "waitBefore": 1000,
+        "waitAfter": 2000
+    },
+    "move": {
+        "humanize": true,
+        "trajectory": "bezier",
+        "duration": 1000,
+        "waitBefore": 100,
+        "waitAfter": 500
+    },
+    "type": {
+        "charDelay": {
+            "min": 50,
+            "max": 150
+        },
+        "waitBefore": 500,
+        "waitAfter": 1000
+    },
+    "idleMotion": {
+        "speed": "normal",
+        "moveInterval": 800,
+        "idleTimeout": 60000,
+        "humanIntervention": {
+            "enabled": true,
+            "pauseOnMouse": true,
+            "pauseOnKeyboard": true,
+            "resumeDelay": 3000
+        }
+    },
+    "scroll": {
+        "delta": 120,
+        "times": 3,
+        "timeout": 60000,
+        "useIdle": true,
+        "autoDelta": true,
+        "deltaFactor": 0.8
+    },
+    "scrollToVisible": {
+        "timeout": 60000,
+        "scrollDelta": 120,
+        "scrollTimes": 10,
+        "checkInterval": 150,
+        "autoDelta": true,
+        "deltaFactor": 0.8
+    },
+    "autoWait": {
+        "enabled": true,
+        "delays": {
+            "afterFind": 500,
+            "afterClick": 1000,
+            "afterType": 1000,
+            "beforeAction": 500
+        }
+    },
+    "logging": {
+        "enabled": true,
+        "level": "info",
+        "showElementInfo": true,
+        "showCoordinates": false
+    }
+}

@@ -22,34 +22,42 @@ async function debugWechat() {
 
     const flow = sdk.flow();
 
+    const wechatWindowSelector ={ title: `微信`, className: `mmui::MainWindow`, processName: `Weixin` };
+    const wechatAppExWindowSelector  = { title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` };
 
 
     try {
 
-        // // 激活窗口
-        // await flow.window({ title: `微信`, className: `mmui::MainWindow`, processName: `Weixin` });
+       if(!await flow.existsWindow(wechatAppExWindowSelector))   {     
 
-        // // ✅ 现在调用 idle() 时不需要传递配置，会使用 SDK 中设置的默认值
-        // await flow.idle(`/Group[@ClassName='QWidget' and @FrameworkId='Qt']`);
+            // 激活窗口
+            await flow.window(wechatWindowSelector);
 
-        // // 查找元素
-        // await flow.click(`//ToolBar[@AutomationId='MainView.main_tabbar']/Button[@Name='搜一搜']/Group/Button`);
-        // await flow.wait(3000);
+            // ✅ 现在调用 idle() 时不需要传递配置，会使用 SDK 中设置的默认值
+            await flow.idle(`/Group[@ClassName='QWidget' and @FrameworkId='Qt']`);
 
-        // 激活窗口
-        await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
+            // 查找元素
+            await flow.click(`//ToolBar[@AutomationId='MainView.main_tabbar']/Button[@Name='搜一搜']/Group/Button`);
+            await flow.wait(3000);
+      
 
+            // 激活窗口
+            await flow.window(wechatAppExWindowSelector);
 
-        // await flow.click(`//Document/Button[@Name='文章']`);
+            await flow.click(`//Document/Button[@Name='文章']`);
 
-        // await flow.idle(`//Document`);
+            await flow.idle(`//Document`);
 
-        // await flow.type("100互助{enter}");
-        // // await flow.wait(5000);
+            await flow.type("100互助{enter}");
+            // await flow.wait(5000);
 
-        console.log(await flow.find(`//Document/Button/Text[@Name='最新']`))
+            console.log(await flow.findOne(`//Document/Button/Text[@Name='最新']`))
 
-        // await flow.click(`//Document/Button/Text[@Name='最新']`);
+            await flow.click(`//Document/Button/Text[@Name='最新']`);
+        }
+        else {
+            await flow.window(wechatAppExWindowSelector);
+        }
 
         // // 文章标题列表 /Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome']/Button[@FrameworkId='Chrome']/ListItem[@FrameworkId='Chrome']
 
@@ -58,26 +66,22 @@ async function debugWechat() {
         console.log("Found", articles.length, "articles.");
         // console.log(articles[0]);
         // console.log(articles[5]);
-        console.log(await articles[5].checkVisibility())
-        console.log("Scrolling to article 5", await articles[5].getLocator());
-        await articles[5].scrollIntoView(`/Document`,{ direction: 'down', autoDelta: true });
-        console.log("Article 5 scrolled into view");
-        console.log(await articles[5].checkVisibility())
+        // console.log(await articles[5].checkVisibility())
+        // console.log("Scrolling to article 5", articles[5].toXpath());
+        // await articles[5].scrollIntoView(`/Document`,{scrollToCenter: true,direction: 'down', autoDelta: true });
+        // console.log("Article 5 scrolled into view");
+        // console.log(await articles[5].checkVisibility())
+        // await articles[5].flash()
+        // await articles[5].click({flash: true});
         // console.log(articles[5]);
         // console.log(articles.length);
 
-        //for (let i = 0; i < Math.min(3, articles.length); i++) {
+        for (let i = 0; i <  articles.length; i++) {
             // 每次循环重新查找元素，避免 stale element 问题
-            // const currentArticles = await flow.findAll(`/Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome' and @LocalizedControlType='主要']/Button[@FrameworkId='Chrome']`);
             
-            // if (i >= currentArticles.length) {
-            //     console.log("文章列表已变化，退出循环");
-            //     break;
-            // }
-            
-            // const article = articles[i];
-            // console.log("Wait for 10 seconds")
-            // await flow.wait(1000);
+            const article = articles[i];
+            console.log("Wait for 10 seconds")
+            await flow.wait(1000);
             // console.log('===========11111===========')
             // console.log(await article.xpath())
             // console.log('===========22222===========')
@@ -86,67 +90,70 @@ async function debugWechat() {
 
 
 
-            // console.log("正在处理文章：", article.info.name)
-            // await article.click();
-            // await flow.wait(5000);
+            console.log("正在处理文章：", article.info.name)
 
-            // if (await flow.exists(`/Document/Button[@AutomationId='js_focus']`)) {
-            //     await flow.click(`/Document/Button[@AutomationId='js_focus']`);
-            //     await flow.wait(2000);
+            console.log("Scrolling to article", article.getSelector());
+            await article.scrollToVisible(`/Document`,{scrollToCenter: true,direction: 'down', autoDelta: true });
+            console.log("Article scrolled into view");
+            //console.log(await articles[5].checkVisibility())
+            await article.flash()
+            await article.click({flash: true});
 
-            //     //滚动鼠标看文章
-            //     await flow.scrollDown(`/Document`, { wait: `/Document/Text[@Name='写留言']` });
+            await flow.wait(5000);
 
-            //     await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+            if (await flow.exists(`/Document/Button[@AutomationId='js_focus']`)) {
+                await flow.click(`/Document/Button[@AutomationId='js_focus']`);
+                await flow.wait(2000);
 
-            //     await flow.click(`/Document/Text[@Name='写留言']`);
+                await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
+                //滚动鼠标看文章
+                // await flow.scrollDown(`/Document`, { wait: `/Document/Text[@Name='写留言']` });
 
+                await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
 
-            //     if (flow.exists(`/Document/Button[@Name='发送']`)) {
-
-            //         let document = await flow.find(`/Document[@FrameworkId='Chrome']`);
-            //         let articleTitle = document.info.name;
-            //         console.log("准备写文章留言：", articleTitle)
-            //         let comment = await generateLLMComment(articleTitle);
-
-            //         console.log("评论：", comment);
+                await flow.click(`/Document/Text[@Name='写留言']`);
 
 
+                if (flow.exists(`/Document/Button[@Name='发送']`)) {
 
+                    let document = await flow.findOne(`/Document[@FrameworkId='Chrome']`);
+                    let articleTitle = document.info.name;
+                    console.log("准备写文章留言：", articleTitle)
+                    let comment = await generateLLMComment(articleTitle);
 
-            //         await flow.type(comment)
-            //         await flow.click(`/Document/Button[@Name='发送']`);
+                    console.log("评论：", comment);
 
-            //         // 激活微信浏览器，关闭标签直到 document.info.name ends with "- 文章 - 搜一搜"
+                    await flow.type(comment)
+                    await flow.click(`/Document/Button[@Name='发送']`);
 
+                    // 激活微信浏览器，关闭标签直到 document.info.name ends with "- 文章 - 搜一搜"
 
+                }
+            }
+            else {
+                console.log("已经关注，跳过这篇文章");
+            }
 
-            //     }
-            // }
-            // else {
-            //     console.log("已经关注，跳过这篇文章");
-            // }
+            // 关闭当前文章标签，返回列表页
+            for (let j = 0; j < 10; j++) {
+                if (!await flow.exists(`/Document[@FrameworkId='Chrome']`)) {
+                    await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
+                }
 
-            // // 关闭当前文章标签，返回列表页
-            // for (let j = 0; j < 10; j++) {
-            //     if (!await flow.exists(`/Document[@FrameworkId='Chrome']`)) {
-            //         await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
-            //     }
-
-            //     let tabItem = await flow.find(`/Document[@FrameworkId='Chrome']`);
-            //     if (tabItem.info.name.endsWith("- 文章 - 搜一搜")) {
-            //         console.log("已返回文章列表页");
-            //         break;
-            //     }
-            //     else {
-            //         await flow.shortcut("Ctrl+F4");
-            //         await flow.wait(1000);
-            //     }
-            // }
+                let tabItem = await flow.findFirst(`/Document[@FrameworkId='Chrome']`);
+                if (tabItem.info.name.endsWith("- 文章 - 搜一搜")) {
+                    console.log("已返回文章列表页");
+                    break;
+                }
+                else {
+                    await flow.shortcut("Ctrl+F4");
+                    await flow.wait(1000);
+                }
+            }
             
-            // // 等待列表页完全加载
-            // await flow.wait(2000);
-        //}
+            // 等待列表页完全加载
+            await flow.wait(2000);
+        }
 
         console.log('\n✓ 所有操作完成!');
     } catch (error) {

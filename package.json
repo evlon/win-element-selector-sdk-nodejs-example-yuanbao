@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "element-selector-sdk-nodejs": "file:../win-element-selector-sdk"
+    "dotenv": "^17.4.2",
+    "element-selector-sdk-nodejs": "file:../win-element-selector-sdk",
+    "openai": "^6.39.0"
   }
 }
