@@ -31,7 +31,8 @@ async function debugWechat() {
 
         // console.log("滚动到写留言出现")
         // await flow.scrollDown(`/Document`, { wait: `/Document/Text[@Name='写留言']` });
-        // await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+        await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+       
         let isFinished = await flow.scrollDetect(`/Document`,{ controlTypes: ['Text'], direction : 'down'});
 
         console.log('检测结果：', isFinished);
