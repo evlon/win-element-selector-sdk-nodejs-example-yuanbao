@@ -51,7 +51,7 @@
         "scrollTimes": 10,
         "checkInterval": 150,
         "autoDelta": true,
-        "deltaFactor": 0.8
+        "deltaFactor": 0.6
     },
     "autoWait": {
         "enabled": true,

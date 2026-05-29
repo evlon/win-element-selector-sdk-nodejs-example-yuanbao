@@ -24,6 +24,7 @@ async function debugWechat() {
 
     const wechatWindowSelector ={ title: `微信`, className: `mmui::MainWindow`, processName: `Weixin` };
     const wechatAppExWindowSelector  = { title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` };
+    const articleListSelector = `/Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome']/Button[@FrameworkId='Chrome']/ListItem[@FrameworkId='Chrome']`
 
 
     try {
@@ -61,7 +62,7 @@ async function debugWechat() {
 
         // // 文章标题列表 /Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome']/Button[@FrameworkId='Chrome']/ListItem[@FrameworkId='Chrome']
 
-        let articles = await flow.findAll(`/Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome' and @LocalizedControlType='主要']/Button[@FrameworkId='Chrome']`);
+        let articles = await flow.findAll(articleListSelector);
 
         console.log("Found", articles.length, "articles.");
         // console.log(articles[0]);
@@ -76,10 +77,17 @@ async function debugWechat() {
         // console.log(articles[5]);
         // console.log(articles.length);
 
-        for (let i = 0; i <  articles.length; i++) {
+        let startIndex = articles.findIndex(article => article.info.isOffscreen == false);
+        console.log(startIndex);
+        await articles[startIndex].scrollToVisible(`/Document`,{scrollToCenter: true,direction: 'up', autoDelta: true });
+        for (let i = startIndex; i <  articles.length; i++) {
             // 每次循环重新查找元素，避免 stale element 问题
-            
+            await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
             const article = articles[i];
+            article.refresh();
+            
+            const articleTitle = article.info.name;
+            const articleWrap = await article.parent();
             console.log("Wait for 10 seconds")
             await flow.wait(1000);
             // console.log('===========11111===========')
@@ -90,14 +98,14 @@ async function debugWechat() {
 
 
 
-            console.log("正在处理文章：", article.info.name)
+            console.log("正在处理文章：", articleTitle)
 
-            console.log("Scrolling to article", article.getSelector());
-            await article.scrollToVisible(`/Document`,{scrollToCenter: true,direction: 'down', autoDelta: true });
+            console.log("Scrolling to article", articleWrap.getSelector());
+            await articleWrap.scrollToVisible(`/Document`,{scrollToCenter: true,direction: 'down', autoDelta: true });
             console.log("Article scrolled into view");
             //console.log(await articles[5].checkVisibility())
-            await article.flash()
-            await article.click({flash: true});
+            await articleWrap.flash()
+            await articleWrap.click({flash: true});
 
             await flow.wait(5000);
 
@@ -109,7 +117,7 @@ async function debugWechat() {
                 //滚动鼠标看文章
                 // await flow.scrollDown(`/Document`, { wait: `/Document/Text[@Name='写留言']` });
 
-                await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+                await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`,{scrollToCenter: true,direction: 'down', autoDelta: true });
 
                 await flow.click(`/Document/Text[@Name='写留言']`);
 

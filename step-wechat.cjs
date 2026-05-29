@@ -29,9 +29,12 @@ async function debugWechat() {
         // 激活窗口
         await flow.window({ title: `微信`, className: `Chrome_WidgetWin_0`, processName: `WeChatAppEx` });
 
-        console.log("滚动到写留言出现")
+        // console.log("滚动到写留言出现")
         // await flow.scrollDown(`/Document`, { wait: `/Document/Text[@Name='写留言']` });
-        await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+        // await flow.scrollToVisible(`/Document/Text[@Name='写留言']`, `/Document`);
+        let isFinished = await flow.scrollDetect(`/Document`,{ controlTypes: ['Text'], direction : 'down'});
+
+        console.log('检测结果：', isFinished);
 
         // // // 文章标题列表 /Document[starts-with(@ClassName, 'Chrome_RenderWidgetHost') and @FrameworkId='Chrome']/Group[@FrameworkId='Chrome']/Button[@FrameworkId='Chrome']/ListItem[@FrameworkId='Chrome']
 
