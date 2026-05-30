@@ -6,8 +6,8 @@ async function testAPI() {
     console.log('=== 测试 LLM API 连接 ===\n');
     console.log('环境变量:');
     console.log('  OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '已设置 (' + process.env.OPENAI_API_KEY.substring(0, 10) + '...)' : '未设置');
-    console.log('  OPENAI_MODEL:', process.env.OPENAI_MODEL || 'gpt-3.5-turbo');
-    console.log('  OPENAI_BASE_URL:', process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1');
+    console.log('  OPENAI_MODEL:', process.env.OPENAI_MODEL || 'auto');
+    console.log('  OPENAI_BASE_URL:', process.env.OPENAI_BASE_URL || 'https://lmproxy.yiq.pub/openai/v1');
     console.log();
 
     try {

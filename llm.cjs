@@ -84,7 +84,8 @@ function httpPost(apiUrl, headers, body) {
      */
  async function generateLLMComment(context){
     const apiKey = process.env.OPENAI_API_KEY;
-    const apiUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1/chat/completions';
+    const baseUrl = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+    const apiUrl = `${baseUrl}/chat/completions`;
     const model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
     
     if (!apiKey) {
@@ -110,7 +111,9 @@ function httpPost(apiUrl, headers, body) {
         max_tokens: 100,
         top_p: 0.9,
         frequency_penalty: 0.5,
-        presence_penalty: 0.5
+        presence_penalty: 0.5,
+        // 禁用推理模式，直接返回内容
+        reasoning_effort: null
     };
 
     const headers = {
@@ -129,7 +132,9 @@ function httpPost(apiUrl, headers, body) {
     try {
         const response = await httpPost(apiUrl, headers, requestBody);
         
-        const comment = response.choices?.[0]?.message?.content?.trim();
+        const message = response.choices?.[0]?.message;
+        // 优先使用 content，如果为空则使用 reasoning_content
+        const comment = (message?.content || message?.reasoning_content || '').trim();
         
         if (!comment) {
             throw new Error('未能生成评论内容');
